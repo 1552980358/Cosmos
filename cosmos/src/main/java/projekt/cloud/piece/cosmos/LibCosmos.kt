@@ -1,8 +1,9 @@
 package projekt.cloud.piece.cosmos
 
+import java.io.Closeable
 import java.io.Serializable
 
-class LibCosmos: Serializable {
+class LibCosmos: Serializable, Closeable {
 
     companion object {
 
@@ -20,6 +21,8 @@ class LibCosmos: Serializable {
 
     private external fun getByteArray(pointer: Long): ByteArray?
 
+    private external fun release(pointer: Long)
+
     fun put(byteArray: ByteArray): Boolean {
         return putByteArray(byteArray)
     }
@@ -31,6 +34,10 @@ class LibCosmos: Serializable {
 
     fun byteArray(): ByteArray? {
         return getByteArray(pointer)
+    }
+
+    override fun close() {
+        release(pointer)
     }
 
 }

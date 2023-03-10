@@ -45,3 +45,12 @@ Java_projekt_cloud_piece_cosmos_LibCosmos_getByteArray(JNIEnv *env, jobject thiz
     env->SetByteArrayRegion(byte_array, 0, cosmos->get_size(), cosmos->get_byte_array());
     return byte_array;
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_projekt_cloud_piece_cosmos_LibCosmos_release(JNIEnv *env, jobject thiz, jlong cosmos_ptr) {
+    // Delete object instance
+    delete (cosmos_t *) cosmos_ptr;
+    // Clear pointer value
+    env->SetLongField(thiz, get_pinter_field(env, thiz), 0);
+}
