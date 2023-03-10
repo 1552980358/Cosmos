@@ -3,7 +3,7 @@ package projekt.cloud.piece.cosmos
 import java.io.Closeable
 import java.io.Serializable
 
-class LibCosmos: Serializable, Closeable {
+internal class LibCosmos(): Serializable, Closeable {
 
     companion object {
 
@@ -15,13 +15,16 @@ class LibCosmos: Serializable, Closeable {
 
     }
 
-    private var pointer: Long = 0
-
+    /** Internal methods **/
     private external fun putByteArray(byteArray: ByteArray): Boolean
-
     private external fun getByteArray(pointer: Long): ByteArray?
-
     private external fun release(pointer: Long)
+
+    constructor(byteArray: ByteArray): this() {
+        put(byteArray)
+    }
+
+    private var pointer: Long = 0
 
     fun put(byteArray: ByteArray): Boolean {
         return putByteArray(byteArray)
