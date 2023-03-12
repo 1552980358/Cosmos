@@ -2,6 +2,7 @@ package projekt.cloud.piece.cosmos
 
 import android.os.Build
 import android.os.Bundle
+import projekt.cloud.piece.cosmos.LibCosmos.Companion.POINTER_NULL
 
 object Cosmos {
 
@@ -73,8 +74,16 @@ object Cosmos {
      **/
     @JvmName("putCosmosToBundle")
     @JvmStatic
-    fun Bundle.putCosmos(name: String, byteArrayCosmos: ByteArrayCosmos) {
-        putSerializable(name, LibCosmos(byteArrayCosmos.saveData()))
+    fun Bundle.putCosmos(name: String, byteArrayCosmos: ByteArrayCosmos): Boolean {
+        putLong(
+            name,
+            LibCosmos().also { cosmos ->
+                if (!cosmos.put(byteArrayCosmos.saveData())) {
+                    return false
+                }
+            }.pointer
+        )
+        return true
     }
 
     /**
@@ -170,19 +179,15 @@ object Cosmos {
         getCosmosNullable(name)?.close()
     }
 
+    private fun Bundle.getCosmosPointer(name: String): Long {
+        return getLong(name, POINTER_NULL)
+    }
+
     private fun Bundle.getCosmosNullable(name: String): LibCosmos? {
         if (name.isBlank() || !containsKey(name)) {
             return null
         }
-        return when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                getSerializable(name, LibCosmos::class.java)
-            }
-            else -> {
-                @Suppress("DEPRECATION")
-                getSerializable(name) as? LibCosmos
-            }
-        }
+        return LibCosmos(getCosmosPointer(name))
     }
 
     private fun Bundle.getCosmos(name: String): LibCosmos {

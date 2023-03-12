@@ -3,7 +3,9 @@ package projekt.cloud.piece.cosmos
 import java.io.Closeable
 import java.io.Serializable
 
-internal class LibCosmos(): Serializable, Closeable {
+internal class LibCosmos @JvmOverloads constructor(
+    internal var pointer: Long = POINTER_NULL
+): Serializable, Closeable {
 
     companion object {
 
@@ -13,18 +15,13 @@ internal class LibCosmos(): Serializable, Closeable {
             System.loadLibrary(LIC_COSMOS)
         }
 
+        internal const val POINTER_NULL = 0L
     }
 
     /** Internal methods **/
     private external fun putByteArray(byteArray: ByteArray): Boolean
     private external fun getByteArray(pointer: Long): ByteArray?
     private external fun release(pointer: Long)
-
-    constructor(byteArray: ByteArray): this() {
-        put(byteArray)
-    }
-
-    private var pointer: Long = 0
 
     fun put(byteArray: ByteArray): Boolean {
         return putByteArray(byteArray)
