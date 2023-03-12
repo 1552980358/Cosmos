@@ -6,6 +6,38 @@ import projekt.cloud.piece.cosmos.LibCosmos.Companion.POINTER_NULL
 object Cosmos {
 
     /**
+     * Method [putCosmos]; Java method name `putCosmosToBundle()`:
+     * Put [ByteArray] into [Bundle]
+     *
+     * @param name
+     * @param byteArray
+     *
+     * Usage:
+     * In Kotlin
+     * ```Kotlin
+     *     import projekt.cloud.piece.cosmos.Cosmos.putCosmos
+     *     ...
+     *     getBundle().putCosmos("cosmos_name", byteArray)
+     * ```
+     * In Java
+     * ```Java
+     *     import projekt.cloud.piece.cosmos.Cosmos;
+     *     ...
+     *     var data = new Data();
+     *     Cosmos.putCosmosToBundle(getBundle(), "cosmos_name", getByteArray());
+     * ```
+     **/
+    @JvmName("putCosmosToBundle")
+    fun Bundle.putCosmos(name: String, byteArray: ByteArray): Boolean {
+        return LibCosmos().let { cosmos ->
+            if (cosmos.put(byteArray)) {
+                putLong(name, cosmos.pointer)
+            }
+            cosmos.pointer != POINTER_NULL
+        }
+    }
+
+    /**
      * Consider a class called `Data`, which implements to interface [ByteArrayCosmos]
      *
      * In Kotlin
@@ -68,21 +100,13 @@ object Cosmos {
      *     import projekt.cloud.piece.cosmos.Cosmos;
      *     ...
      *     var data = new Data();
-     *     Cosmos.putCosmosToBundle(getBundle(), "cosmos_name" data);
+     *     Cosmos.putCosmosToBundle(getBundle(), "cosmos_name", data);
      * ```
      **/
     @JvmName("putCosmosToBundle")
     @JvmStatic
     fun Bundle.putCosmos(name: String, byteArrayCosmos: ByteArrayCosmos): Boolean {
-        putLong(
-            name,
-            LibCosmos().also { cosmos ->
-                if (!cosmos.put(byteArrayCosmos.saveData())) {
-                    return false
-                }
-            }.pointer
-        )
-        return true
+        return putCosmos(name, byteArrayCosmos.saveData())
     }
 
     /**
