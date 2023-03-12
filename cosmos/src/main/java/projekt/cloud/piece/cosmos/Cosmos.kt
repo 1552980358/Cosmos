@@ -1,6 +1,5 @@
 package projekt.cloud.piece.cosmos
 
-import android.os.Build
 import android.os.Bundle
 import projekt.cloud.piece.cosmos.LibCosmos.Companion.POINTER_NULL
 
@@ -84,6 +83,37 @@ object Cosmos {
             }.pointer
         )
         return true
+    }
+
+    /**
+     * Method [isCosmosExists]; Java method `Cosmos.checkIsCosmosExists()`:
+     * Check if Cosmos is existed in Bundle
+     *
+     * @param name
+     *
+     * Usage:
+     * In Kotlin
+     * ```Kotlin
+     *     import projekt.cloud.piece.cosmos.Cosmos.isCosmosExists
+     *     ...
+     *     val bundle = getBundle()
+     *     if (bundle.isCosmosExists("cosmos_name")) {
+     *         ...
+     *     }
+     * ```
+     * In Java
+     * ```Java
+     *     import projekt.cloud.piece.cosmos.Cosmos;
+     *     ...
+     *     var bundle = getBundle();
+     *     if (Cosmos.checkIsCosmosExists(bundle, "cosmos_name")) {
+     *         ...
+     *     }
+     * ```
+     **/
+    @JvmName("checkIsCosmosExists")
+    fun Bundle.isCosmosExists(name: String): Boolean {
+        return containsKey(name) && getCosmosPointer(name) != POINTER_NULL
     }
 
     /**
@@ -184,7 +214,7 @@ object Cosmos {
     }
 
     private fun Bundle.getCosmosNullable(name: String): LibCosmos? {
-        if (name.isBlank() || !containsKey(name)) {
+        if (!isCosmosExists(name)) {
             return null
         }
         return LibCosmos(getCosmosPointer(name))
