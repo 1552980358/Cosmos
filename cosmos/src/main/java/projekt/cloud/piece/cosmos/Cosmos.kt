@@ -170,8 +170,24 @@ object Cosmos {
     @JvmStatic
     fun <T: ByteArrayCosmos> Bundle.getCosmos(name: String, block: () -> T): T {
         return block.invoke().apply {
-            recoverData(getCosmos(name).byteArray)
+            recoverData(getCosmos(name))
         }
+    }
+
+    /**
+     * Method [getCosmos]; Java method `getCosmosFromBundle()`:
+     * Get [ByteArray] from [Bundle]
+     * You should call [clearCosmos] when you do not need [LibCosmos.pointer] pointed [ByteArray] in
+     * memory anymore.
+     * Other than self calling [clearCosmos], using [extractCosmos] is advised to get a copy and
+     * release [LibCosmos.pointer] pointed memory space, letting JVM controls over the instance GC
+     *
+     * @param name
+     * @return [ByteArray]
+     **/
+    @JvmName("getCosmosFromBundle")
+    fun Bundle.getCosmos(name: String): ByteArray {
+        return getLibCosmos(name).byteArray
     }
 
     /**
@@ -203,11 +219,27 @@ object Cosmos {
      **/
     @JvmName("extractCosmosFromBundle")
     fun <T: ByteArrayCosmos> Bundle.extractCosmos(name: String, block: () -> T): T {
-        return getCosmos(name).use { cosmos ->
-            block.invoke().apply {
-                recoverData(cosmos.byteArray)
-            }
-        }
+        return block.invoke()
+            .apply { recoverData(extractCosmos(name)) }
+    }
+
+    /**
+     * Method [extractCosmos]; Java method `extractCosmosFromBundle()`:
+     * Same function as [getCosmos], but will clear cached [ByteArray] content.
+     * It is strongly advised to use this method to copy your own [ByteArray] instance,
+     * other than storing [ByteArray] pointed by [LibCosmos.pointer],
+     * which may lead to memory leaks if you forgot to release [LibCosmos.pointer] pointed [ByteArray]
+     * in memory by calling [clearCosmos].
+     * Getting a copy and release [LibCosmos.pointer] pointed memory space, and let JVM controls over
+     * the instance GC will gain a better memory performance.
+     *
+     * @param name
+     * @return [ByteArray]
+     **/
+    @JvmName("extractCosmosFromBundle")
+    fun Bundle.extractCosmos(name: String): ByteArray {
+        return getLibCosmos(name)
+            .use { it.byteArray }
     }
 
     /**
