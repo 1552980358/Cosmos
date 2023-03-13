@@ -230,22 +230,22 @@ object Cosmos {
      **/
     @JvmName("clearCosmosFromBundle")
     fun Bundle.clearCosmos(name: String) {
-        getCosmosNullable(name)?.close()
+        getLibCosmosNullable(name)?.close()
     }
 
     private fun Bundle.getCosmosPointer(name: String): Long {
         return getLong(name, POINTER_NULL)
     }
 
-    private fun Bundle.getCosmosNullable(name: String): LibCosmos? {
+    private fun Bundle.getLibCosmosNullable(name: String): LibCosmos? {
         if (!isCosmosExists(name)) {
             return null
         }
         return LibCosmos(getCosmosPointer(name))
     }
 
-    private fun Bundle.getCosmos(name: String): LibCosmos {
-        return getCosmosNullable(name)!!
+    private fun Bundle.getLibCosmos(name: String): LibCosmos {
+        return getLibCosmosNullable(name)!!
     }
 
 }
