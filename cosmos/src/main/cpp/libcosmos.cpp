@@ -6,11 +6,12 @@
 
 #include "cosmos.h"
 
+#define jni_void extern "C" JNIEXPORT void JNICALL
 #define jni_boolean extern "C" JNIEXPORT jboolean JNICALL
+#define jni_byte_array extern "C" JNIEXPORT jbyteArray JNICALL
 #define jni_object extern "C" JNIEXPORT jobject JNICALL
 
-extern "C"
-JNIEXPORT jboolean JNICALL
+jni_boolean
 Java_projekt_cloud_piece_cosmos_LibCosmos_putByteArray(JNIEnv *env, jobject thiz,
                                                        jbyteArray byte_array) {
     auto size = env->GetArrayLength(byte_array);
@@ -33,9 +34,7 @@ Java_projekt_cloud_piece_cosmos_LibCosmos_putByteArray(JNIEnv *env, jobject thiz
     return true;
 }
 
-
-extern "C"
-JNIEXPORT jbyteArray JNICALL
+jni_byte_array
 Java_projekt_cloud_piece_cosmos_LibCosmos_getByteArray(JNIEnv *env, jobject, jlong cosmos_ptr) {
     auto cosmos = (cosmos_t *) cosmos_ptr;
     if (!cosmos_ptr) {
@@ -49,8 +48,7 @@ Java_projekt_cloud_piece_cosmos_LibCosmos_getByteArray(JNIEnv *env, jobject, jlo
     return byte_array;
 }
 
-extern "C"
-JNIEXPORT void JNICALL
+jni_void
 Java_projekt_cloud_piece_cosmos_LibCosmos_release(JNIEnv *env, jobject thiz, jlong cosmos_ptr) {
     // Delete object instance
     delete (cosmos_t *) cosmos_ptr;
@@ -58,9 +56,8 @@ Java_projekt_cloud_piece_cosmos_LibCosmos_release(JNIEnv *env, jobject thiz, jlo
     env->SetLongField(thiz, get_pinter_field(env, thiz), 0);
 }
 
-#define cosmos_put_bitmap Java_projekt_cloud_piece_cosmos_LibCosmos_putBitmap
-
-jni_boolean cosmos_put_bitmap(JNIEnv *env, jobject thiz, jobject jbitmap) {
+jni_boolean
+Java_projekt_cloud_piece_cosmos_LibCosmos_putBitmap(JNIEnv *env, jobject thiz, jobject jbitmap) {
     AndroidBitmapInfo android_bitmap_info;
     if (AndroidBitmap_getInfo(env, jbitmap, &android_bitmap_info)/** != ANDROID_BITMAP_RESULT_SUCCESS **/
         || !check_bitmap_format_support(android_bitmap_info)) {
@@ -94,8 +91,8 @@ jni_boolean cosmos_put_bitmap(JNIEnv *env, jobject thiz, jobject jbitmap) {
     return true;
 }
 
-#define cosmos_get_bitmap Java_projekt_cloud_piece_cosmos_LibCosmos_getBitmap
-jni_object cosmos_get_bitmap(JNIEnv *env, jobject, jlong pointer) {
+jni_object
+Java_projekt_cloud_piece_cosmos_LibCosmos_getBitmap(JNIEnv *env, jobject, jlong pointer) {
     auto cosmos = (cosmos_t *) pointer;
     bitmap_t *bitmap;
     if (!cosmos || !(bitmap = cosmos->get_bitmap())) {
