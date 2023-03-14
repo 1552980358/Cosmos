@@ -296,6 +296,7 @@ object Cosmos {
      * ```
      **/
     @JvmName("clearCosmosFromBundle")
+    @JvmStatic
     fun Bundle.clearCosmos(name: String) {
         getLibCosmosNullable(name)?.close()
     }
