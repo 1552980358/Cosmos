@@ -274,6 +274,7 @@ object Cosmos {
     fun Bundle.extractCosmos(name: String): ByteArray {
         return getLibCosmos(name)
             .use { it.byteArray }
+            .also { remove(name) }
     }
 
     /**
