@@ -24,6 +24,7 @@ public:
     ~cosmos();
 
     byte_t *get_byte_array();
+    bitmap_t *get_bitmap();
 
     array_size_t get_size() const;
 

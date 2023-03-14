@@ -8,6 +8,7 @@
 
 
 #define jni_boolean extern "C" JNIEXPORT jboolean JNICALL
+#define jni_object extern "C" JNIEXPORT jobject JNICALL
 
 extern "C"
 JNIEXPORT jboolean JNICALL
@@ -92,4 +93,33 @@ jni_boolean cosmos_put_bitmap(JNIEnv *env, jobject thiz, jobject jbitmap) {
                 (pointer_t) new cosmos(byte_array, (array_size_t) pixel_size, bitmap)
     );
     return true;
+}
+
+#define cosmos_get_bitmap Java_projekt_cloud_piece_cosmos_LibCosmos_getBitmap
+jni_object cosmos_get_bitmap(JNIEnv *env, jobject, jlong pointer) {
+    auto cosmos = (cosmos_t *) pointer;
+    bitmap_t *bitmap;
+    if (!cosmos || !(bitmap = cosmos->get_bitmap())) {
+        return nullptr;
+    }
+    auto bitmap_config = get_jvm_bitmap_config(env, bitmap->format);
+    if (!bitmap_config) {
+        return nullptr;
+    }
+    auto jbitmap = create_jvm_bitmap(env, bitmap->width, bitmap->height, bitmap_config);
+    if (!jbitmap) {
+        return nullptr;
+    }
+
+    void *pixels = nullptr;
+    if (AndroidBitmap_lockPixels(env, jbitmap, &pixels)) {
+        return nullptr;
+    }
+
+    // Copy pixels
+    memcpy(pixels, cosmos->get_bitmap(), cosmos->get_size());
+
+    // Release
+    AndroidBitmap_unlockPixels(env, jbitmap);
+    return jbitmap;
 }

@@ -21,4 +21,7 @@ bool check_bitmap_format_support(const AndroidBitmapInfo &);
 
 int get_bitmap_format_byte_size(const AndroidBitmapInfo &);
 
+jobject get_jvm_bitmap_config(JNIEnv *, const int32_t &);
+jobject create_jvm_bitmap(JNIEnv *env, const bitmap_size_t &, const bitmap_size_t &, jobject);
+
 #endif //COSMOS_BITMAP_H

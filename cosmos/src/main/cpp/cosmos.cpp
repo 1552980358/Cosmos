@@ -23,6 +23,10 @@ byte_t *cosmos::get_byte_array() {
     return _byte_array;
 }
 
+bitmap_t *cosmos::get_bitmap() {
+    return _bitmap;
+}
+
 array_size_t cosmos::get_size() const {
     return _size;
 }

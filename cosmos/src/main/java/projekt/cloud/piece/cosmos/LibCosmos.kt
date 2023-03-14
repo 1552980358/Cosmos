@@ -32,6 +32,7 @@ internal class LibCosmos constructor(
     private external fun putByteArray(byteArray: ByteArray): Boolean
     private external fun putBitmap(bitmap: Bitmap): Boolean
     private external fun getByteArray(pointer: Long): ByteArray?
+    private external fun getBitmap(pointer: Long): Bitmap?
     private external fun release(pointer: Long)
 
     fun put(byteArray: ByteArray): Boolean {
@@ -49,6 +50,13 @@ internal class LibCosmos constructor(
 
     fun byteArray(): ByteArray? {
         return getByteArray(pointer)
+    }
+
+    val bitmap: Bitmap
+        get() = bitmap()!!
+
+    fun bitmap(): Bitmap? {
+        return getBitmap(pointer)
     }
 
     override fun close() {
