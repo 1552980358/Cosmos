@@ -2,6 +2,7 @@ package projekt.cloud.piece.cosmos
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import projekt.cloud.piece.cosmos.LibCosmos.Companion.LibCosmos
 import projekt.cloud.piece.cosmos.LibCosmos.Companion.POINTER_NULL
 
 object Cosmos {
@@ -30,11 +31,10 @@ object Cosmos {
      **/
     @JvmName("putCosmosToBundle")
     fun Bundle.putCosmos(name: String, byteArray: ByteArray): Boolean {
-        return LibCosmos().let { cosmos ->
-            if (cosmos.put(byteArray)) {
-                putLong(name, cosmos.pointer)
+        return LibCosmos(getLong(name, POINTER_NULL)) {
+            if (put(byteArray)) {
+                putLong(name, pointer)
             }
-            cosmos.pointer != POINTER_NULL
         }
     }
 
@@ -136,11 +136,10 @@ object Cosmos {
     @JvmName("putCosmosToBundle")
     @JvmStatic
     fun Bundle.putCosmos(name: String, bitmap: Bitmap): Boolean {
-        return LibCosmos().let { cosmos ->
-            if (cosmos.put(bitmap)) {
-                putLong(name, cosmos.pointer)
+        return LibCosmos(getLong(name, POINTER_NULL)) {
+            if (put(bitmap)) {
+                putLong(name, pointer)
             }
-            cosmos.pointer != POINTER_NULL
         }
     }
 

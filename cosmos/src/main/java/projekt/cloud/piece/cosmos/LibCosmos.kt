@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import java.io.Closeable
 import java.io.Serializable
 
-internal class LibCosmos @JvmOverloads constructor(
+internal class LibCosmos constructor(
     internal var pointer: Long = POINTER_NULL
 ): Serializable, Closeable {
 
@@ -17,6 +17,15 @@ internal class LibCosmos @JvmOverloads constructor(
         }
 
         internal const val POINTER_NULL = 0L
+
+        @Suppress("FunctionName")
+        internal fun LibCosmos(pointer: Long, block: LibCosmos.() -> Unit): Boolean {
+            return LibCosmos(pointer).let {
+                block.invoke(it)
+                pointer != POINTER_NULL
+            }
+        }
+
     }
 
     /** Internal methods **/
