@@ -6,7 +6,7 @@ add_library(cosmos SHARED
         libcosmos.cpp
         lib_cosmos_util.h lib_cosmos_util.cpp
         cosmos.h cosmos.cpp
-        bitmap.h
+        bitmap.h bitmap.cpp
         )
 
 find_library(log-lib log)

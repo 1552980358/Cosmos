@@ -1,5 +1,6 @@
 package projekt.cloud.piece.cosmos
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import projekt.cloud.piece.cosmos.LibCosmos.Companion.POINTER_NULL
 
@@ -107,6 +108,40 @@ object Cosmos {
     @JvmStatic
     fun Bundle.putCosmos(name: String, byteArrayCosmos: ByteArrayCosmos): Boolean {
         return putCosmos(name, byteArrayCosmos.saveData())
+    }
+
+    /**
+     * Method [putCosmos]; Java method `putCosmosToBundle()`:
+     * Put [Bitmap] into [Bundle]
+     *
+     * @param name [String]
+     * @param bitmap [Bitmap]
+     * @return [Boolean]
+     *
+     * In Kotlin
+     * ```Kotlin
+     *    import projekt.cloud.piece.cosmos.Cosmos.putCosmos
+     *    ...
+     *    val bitmap = getBitmap()
+     *    getBundle().putCosmos("cosmos_name", bitmap)
+     * ```
+     * In Java
+     * ```Java
+     *     import projekt.cloud.piece.cosmos.Cosmos;
+     *     ...
+     *     var bitmap = getBitmap();
+     *     Cosmos.putCosmosToBundle(getBundle(), "cosmos_name", bitmap);
+     * ```
+     **/
+    @JvmName("putCosmosToBundle")
+    @JvmStatic
+    fun Bundle.putCosmos(name: String, bitmap: Bitmap): Boolean {
+        return LibCosmos().let { cosmos ->
+            if (cosmos.put(bitmap)) {
+                putLong(name, cosmos.pointer)
+            }
+            cosmos.pointer != POINTER_NULL
+        }
     }
 
     /**

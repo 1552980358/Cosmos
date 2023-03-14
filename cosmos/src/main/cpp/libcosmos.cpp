@@ -6,6 +6,9 @@
 
 #include "cosmos.h"
 
+
+#define jni_boolean extern "C" JNIEXPORT jboolean JNICALL
+
 extern "C"
 JNIEXPORT jboolean JNICALL
 Java_projekt_cloud_piece_cosmos_LibCosmos_putByteArray(JNIEnv *env, jobject thiz,
@@ -53,4 +56,40 @@ Java_projekt_cloud_piece_cosmos_LibCosmos_release(JNIEnv *env, jobject thiz, jlo
     delete (cosmos_t *) cosmos_ptr;
     // Clear pointer value
     env->SetLongField(thiz, get_pinter_field(env, thiz), 0);
+}
+
+#define cosmos_put_bitmap Java_projekt_cloud_piece_cosmos_LibCosmos_putBitmap
+
+jni_boolean cosmos_put_bitmap(JNIEnv *env, jobject thiz, jobject jbitmap) {
+    AndroidBitmapInfo android_bitmap_info;
+    if (AndroidBitmap_getInfo(env, jbitmap, &android_bitmap_info)/** != ANDROID_BITMAP_RESULT_SUCCESS **/
+        || !check_bitmap_format_support(android_bitmap_info)) {
+        return false;
+    }
+
+    auto pixel_size = android_bitmap_info.width * android_bitmap_info.height *
+            get_bitmap_format_byte_size(android_bitmap_info);
+
+    auto byte_array = (byte *) malloc(pixel_size);
+    if (!byte_array) {
+        return false;
+    }
+
+    void *locked_pixels = nullptr;
+    if (AndroidBitmap_lockPixels(env, jbitmap, &locked_pixels)/** != ANDROID_BITMAP_RESULT_SUCCESS **/) {
+        free(byte_array);
+        return false;
+    }
+
+    memcpy(locked_pixels, byte_array, pixel_size);
+    AndroidBitmap_unlockPixels(env, jbitmap);
+
+    auto bitmap = new bitmap_t { android_bitmap_info.width, android_bitmap_info.height, android_bitmap_info.format };
+
+    set_pointer(env,
+                thiz,
+                get_pinter_field(env, thiz),
+                (pointer_t) new cosmos(byte_array, (array_size_t) pixel_size, bitmap)
+    );
+    return true;
 }

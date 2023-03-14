@@ -19,6 +19,7 @@ private:
 
 public:
     cosmos(byte_t *, const array_size_t &);
+    cosmos(byte_t *, const array_size_t &, bitmap_t *);
 
     ~cosmos();
 
