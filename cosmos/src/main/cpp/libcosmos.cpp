@@ -6,7 +6,6 @@
 
 #include "cosmos.h"
 
-
 #define jni_boolean extern "C" JNIEXPORT jboolean JNICALL
 #define jni_object extern "C" JNIEXPORT jobject JNICALL
 
@@ -37,7 +36,7 @@ Java_projekt_cloud_piece_cosmos_LibCosmos_putByteArray(JNIEnv *env, jobject thiz
 
 extern "C"
 JNIEXPORT jbyteArray JNICALL
-Java_projekt_cloud_piece_cosmos_LibCosmos_getByteArray(JNIEnv *env, jobject thiz, jlong cosmos_ptr) {
+Java_projekt_cloud_piece_cosmos_LibCosmos_getByteArray(JNIEnv *env, jobject, jlong cosmos_ptr) {
     auto cosmos = (cosmos_t *) cosmos_ptr;
     if (!cosmos_ptr) {
         return nullptr;
