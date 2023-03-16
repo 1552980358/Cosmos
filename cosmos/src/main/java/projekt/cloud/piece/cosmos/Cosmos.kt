@@ -225,6 +225,37 @@ object Cosmos {
     }
 
     /**
+     * Method [getCosmosBitmap]; Java method `getCosmosBitmapFromBundle()`:
+     * Get [Bitmap] from [Bundle]
+     * You should call [clearCosmos] when you do not need [LibCosmos.pointer] pointed [ByteArray] in
+     * memory anymore.
+     * Other than self calling [clearCosmos], using [extractCosmosBitmap] is advised to get a copy and
+     * release [LibCosmos.pointer] pointed memory space, letting JVM controls over the instance GC
+     *
+     * @param name
+     * @return [Bitmap]
+     *
+     * Usage:
+     * In Kotlin
+     * ```Kotlin
+     *     import projekt.cloud.piece.cosmos.Cosmos.getCosmosBitmap
+     *     ...
+     *     getBundle().getCosmosBitmap("cosmos_name")
+     * ```
+     * In Java
+     * ```
+     *     import projekt.cloud.piece.cosmos.Cosmos;
+     *     ...
+     *     Cosmos.getCosmosBitmapFromBundle(getBundle(), "cosmos_name");
+     * ```
+     **/
+    @JvmName("getCosmosBitmapFromBundle")
+    @JvmStatic
+    fun Bundle.getCosmosBitmap(name: String): Bitmap {
+        return getLibCosmos(name).bitmap
+    }
+
+    /**
      * Method [extractCosmos]; Java method name: `extractCosmosFromBundle()`;
      * Same function as [getCosmos], but will clear cached [ByteArray] content.
      * It is strongly advised to use this method to copy your own [ByteArray] instance,
@@ -274,6 +305,39 @@ object Cosmos {
     fun Bundle.extractCosmos(name: String): ByteArray {
         return getLibCosmos(name)
             .use { it.byteArray }
+            .also { remove(name) }
+    }
+
+    /**
+     * Method [extractCosmosBitmap]; Java method `extractCosmosBitmapFromBundle()`:
+     * Same function as [getCosmos], but will clear cached [Bitmap] content.
+     * It is strongly advised to use this method to copy your own [Bitmap] instance,
+     * other than storing [Bitmap] pointed by [LibCosmos.pointer],
+     * which may lead to memory leaks if you forgot to release [LibCosmos.pointer] pointed [Bitmap]
+     * in memory by calling [clearCosmos].
+     * Getting a copy and release [LibCosmos.pointer] pointed memory space, and let JVM controls over
+     * the instance GC will gain a better memory performance.
+     *
+     * @param name
+     * @return [Bitmap]
+     *
+     * Usage:
+     * In Kotlin
+     * ```Kotlin
+     *     import projekt.cloud.piece.cosmos.Cosmos.extractCosmosBitmap
+     *     ...
+     *     getBundle().extractCosmosBitmap("cosmos_name")
+     * ```
+     * In Java
+     * ```
+     *     import projekt.cloud.piece.cosmos.Cosmos;
+     *     ...
+     *     Cosmos.extractCosmosBitmapFromBundle(getBundle(), "cosmos_name");
+     **/
+    @JvmName("extractCosmosBitmapFromBundle")
+    fun Bundle.extractCosmosBitmap(name: String): Bitmap {
+        return getLibCosmos(name)
+            .use { it.bitmap }
             .also { remove(name) }
     }
 
